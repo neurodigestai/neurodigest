@@ -1,0 +1,7 @@
+python-dotenv
+tenacity
+feedparser
+requests
+beautifulsoup4
+lxml
+Pillow

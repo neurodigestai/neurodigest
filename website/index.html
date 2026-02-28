@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neuro-AI Research Digest — Stay Ahead of the Science</title>
+  <meta name="description" content="A curated periodic briefing of the most important computational neuroscience and neuro-AI research. Summarized, ranked, and delivered to your inbox.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Neural network canvas background -->
+  <canvas id="neural-canvas"></canvas>
+
+  <!-- Floating glow orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <span class="logo-icon">🧠</span>
+        <span class="logo-text">Neuro-AI Digest</span>
+      </div>
+      <a href="#subscribe" class="nav-cta">Subscribe Free</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Free • Every 3 Days • Auto-Curated
+      </div>
+      <h1 class="hero-title">
+        <span class="title-line">Neuro-AI</span>
+        <span class="title-line gradient-text">Research Digest</span>
+      </h1>
+      <p class="hero-subtitle">
+        A 5-minute periodic briefing of the most important computational
+        neuroscience and neuro-AI research — summarized, ranked, and delivered
+        straight to your inbox.
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number" data-count="15">0</span>
+          <span class="stat-label">RSS Sources</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number" data-count="20">0</span>
+          <span class="stat-label">Top Papers</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number" data-count="5">0</span>
+          <span class="stat-label">Min Read</span>
+        </div>
+      </div>
+      <a href="#subscribe" class="hero-cta">
+        <span>Get Started — It's Free</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- What You Get Section -->
+  <section class="features" id="features">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">What You Get</span>
+        <h2 class="section-title">Science, distilled for your inbox</h2>
+        <p class="section-desc">
+          Every digest is automatically curated by our AI pipeline — no human
+          bottleneck, just the research that matters.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card" data-delay="0">
+          <div class="feature-icon">📡</div>
+          <h3>15+ Live Sources</h3>
+          <p>
+            arXiv, bioRxiv, Quanta Magazine, Allen Institute, DeepMind Blog,
+            Neuroscience News, Reddit, and more — all monitored automatically.
+          </p>
+        </div>
+        <div class="feature-card" data-delay="100">
+          <div class="feature-icon">🧪</div>
+          <h3>AI-Ranked Relevance</h3>
+          <p>
+            Each paper is scored on neuroscience relevance, source credibility,
+            and community engagement. Only the top 20 make the cut.
+          </p>
+        </div>
+        <div class="feature-card" data-delay="200">
+          <div class="feature-icon">✍️</div>
+          <h3>Plain-Language Summaries</h3>
+          <p>
+            LLM-generated summaries explain each finding in simple terms —
+            no jargon, no equations. Just the key insight.
+          </p>
+        </div>
+        <div class="feature-card" data-delay="300">
+          <div class="feature-icon">📊</div>
+          <h3>Concept Diagrams</h3>
+          <p>
+            Major research items include auto-generated conceptual diagrams
+            that help you understand the research idea in seconds.
+          </p>
+        </div>
+        <div class="feature-card" data-delay="400">
+          <div class="feature-icon">📂</div>
+          <h3>Organized Categories</h3>
+          <p>
+            Posts are sorted into Major Research, Understanding, Community,
+            and Tools — scan the sections that matter to you.
+          </p>
+        </div>
+        <div class="feature-card" data-delay="500">
+          <div class="feature-icon">⚡</div>
+          <h3>Zero Effort</h3>
+          <p>
+            Subscribe once, receive forever. The entire pipeline runs
+            autonomously every 3 days on cloud servers.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="pipeline" id="pipeline">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">How It Works</span>
+        <h2 class="section-title">Fully automated, end-to-end</h2>
+      </div>
+
+      <div class="pipeline-steps">
+        <div class="pipeline-step">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <h3>Fetch</h3>
+            <p>15+ RSS feeds are monitored for new papers, articles, and discussions.</p>
+          </div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <h3>Filter & Rank</h3>
+            <p>Each post is scored for neuroscience relevance and ranked by quality.</p>
+          </div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <h3>Summarize</h3>
+            <p>Top 20 posts are summarized by an LLM in simple, jargon-free language.</p>
+          </div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-number">04</div>
+          <div class="step-content">
+            <h3>Deliver</h3>
+            <p>The formatted digest with diagrams lands in your inbox automatically.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subscribe Section -->
+  <section class="subscribe" id="subscribe">
+    <div class="section-container">
+      <div class="subscribe-card">
+        <div class="subscribe-glow"></div>
+        <div class="subscribe-content">
+          <span class="section-tag">Join the Community</span>
+          <h2 class="subscribe-title">Never miss a breakthrough</h2>
+          <p class="subscribe-desc">
+            Enter your email below and you'll receive the next Neuro-AI digest
+            automatically. No spam. Unsubscribe anytime.
+          </p>
+
+          <form id="subscribe-form" class="subscribe-form" autocomplete="off">
+            <div class="input-wrapper">
+              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="M22 7l-10 6L2 7"/>
+              </svg>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="your@email.com"
+                required
+                autocomplete="email"
+              >
+            </div>
+            <button type="submit" id="subscribeBtn" class="subscribe-btn">
+              <span class="btn-text">Subscribe</span>
+              <span class="btn-loader"></span>
+              <svg class="btn-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+            </button>
+          </form>
+
+          <div id="form-message" class="form-message"></div>
+
+          <div class="trust-signals">
+            <div class="trust-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>Privacy first</span>
+            </div>
+            <div class="trust-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <path d="M22 4L12 14.01l-3-3"/>
+              </svg>
+              <span>Free forever</span>
+            </div>
+            <div class="trust-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                <line x1="15" y1="9" x2="15.01" y2="9"/>
+              </svg>
+              <span>No spam</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="section-container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <span class="logo-icon">🧠</span>
+          <span class="logo-text">Neuro-AI Digest</span>
+        </div>
+        <p class="footer-copy">
+          &copy; 2026 Neuro-AI Research Digest. Built with Python, RSS, and LLMs.
+        </p>
+        <div class="footer-links">
+          <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+          <span class="footer-dot">·</span>
+          <a href="#subscribe">Subscribe</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="subscribe.js"></script>
+</body>
+</html>

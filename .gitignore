@@ -1,0 +1,23 @@
+# ── Python ────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Environment / Secrets ─────────────────────────────────
+config/.env
+.env
+
+# ── Runtime data (regenerated each run) ───────────────────
+data/
+logs/
+
+# ── IDE / OS ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store

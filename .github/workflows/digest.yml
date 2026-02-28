@@ -1,0 +1,60 @@
+# ────────────────────────────────────────────────────────────────────
+# Neuro-AI Research Digest — Automated Cloud Runner
+# ────────────────────────────────────────────────────────────────────
+# Runs every 3 days at 06:00 UTC on a free GitHub-hosted Linux runner.
+# Also supports manual triggering via the "Run workflow" button.
+#
+# Required repository secrets (Settings → Secrets → Actions):
+#   • DEEPSEEK_API_KEY     – API key for DeepSeek LLM
+#   • EMAIL_ADDRESS        – Gmail address to send/receive the digest
+#   • EMAIL_APP_PASSWORD   – Gmail App Password for SMTP authentication
+# ────────────────────────────────────────────────────────────────────
+
+name: Neuro-AI Digest
+
+on:
+  schedule:
+    # Run every 3 days at 06:00 UTC
+    - cron: "0 6 */3 * *"
+
+  # Allow manual runs from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  run-digest:
+    name: Generate & Email Digest
+    runs-on: ubuntu-latest
+
+    env:
+      # Inject repository secrets as environment variables.
+      # config_loader.py reads these via os.getenv() and they take
+      # priority over the local .env file (override=False).
+      DEEPSEEK_API_KEY:     ${{ secrets.DEEPSEEK_API_KEY }}
+      EMAIL_ADDRESS:        ${{ secrets.EMAIL_ADDRESS }}
+      EMAIL_APP_PASSWORD:   ${{ secrets.EMAIL_APP_PASSWORD }}
+      IMAGE_MODEL_PROVIDER: ${{ secrets.IMAGE_MODEL_PROVIDER }}
+      IMAGE_API_KEY:        ${{ secrets.IMAGE_API_KEY }}
+      SUBSCRIBERS_SHEET_CSV: ${{ secrets.SUBSCRIBERS_SHEET_CSV }}
+      UNSUBSCRIBE_SHEET_CSV: ${{ secrets.UNSUBSCRIBE_SHEET_CSV }}
+      UNSUBSCRIBE_FORM_URL: ${{ secrets.UNSUBSCRIBE_FORM_URL }}
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Python 3.11
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Run the digest pipeline
+      - name: Run digest pipeline
+        run: python main.py
