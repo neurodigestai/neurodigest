@@ -23,8 +23,8 @@
     // 5. Copy FORM_ID and ENTRY_ID below
 
     const GOOGLE_FORM_ACTION =
-        "https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse";
-    const GOOGLE_FORM_ENTRY = "entry.YOUR_ENTRY_ID";
+        "https://docs.google.com/forms/d/e/1FAIpQLSdtsZS2tWd7y7jr4Fd-b1-jpTe-f7FuPoGdkkOfdIt0zDgOlA/formResponse";
+    const GOOGLE_FORM_ENTRY = "entry.1493098263";
 
     // ────────────────────────────────────────────────────────────────
     // 1. NEURAL NETWORK CANVAS
