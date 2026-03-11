@@ -27,21 +27,20 @@ from summarizer import summarize_post, SUMMARY_FAILED_MARKER
 from summary_refiner import refine_summary
 from digest_builder import build_digest
 from emailer import send_digest_email, send_digest_to_subscribers
-from categories import MAJOR_RESEARCH
 from subscribers import get_subscribers
 from unsubscribe_handler import filter_unsubscribed
 
 
 def ensure_directories() -> None:
-    """Create any missing project directories (data/, logs/, data/diagrams/)."""
-    for directory in ("data", "logs", os.path.join("data", "diagrams")):
+    """Create any missing project directories (data/, logs/)."""
+    for directory in ("data", "logs"):
         os.makedirs(directory, exist_ok=True)
 
 
 def main() -> None:
     """Bootstrap the application: load config, init logging, fetch feeds,
     persist new posts, extract content, rank, summarize, refine,
-    generate diagrams, and email digest to all subscribers."""
+    and email digest to all subscribers."""
 
     # 1. Ensure required directories exist
     ensure_directories()
@@ -208,83 +207,16 @@ def main() -> None:
         print(f"Refined {refined_count} summaries")
         log.info("Refined %d summaries", refined_count)
 
-    # == Phase 7B: Diagram Generation ==================================
-    if selected and has_summaries and Config.IMAGE_API_KEY:
-        # Lazy imports — only needed when image generation is configured
-        from diagram_planner import create_diagram_plan
-        from diagram_prompt import build_diagram_prompt
-        from diagram_generator import generate_diagram
-        from image_store import save_diagram, get_diagram_path
 
-        major_research = [
-            rp for rp in selected if rp.category == MAJOR_RESEARCH
-        ]
-
-        if major_research:
-            print(f"Generating diagrams for {len(major_research)} Major Research items...")
-            log.info("Generating diagrams for %d Major Research items...",
-                     len(major_research))
-            diagrams_created = 0
-            diagrams_failed = 0
-
-            for rp in major_research:
-                # Skip if diagram already exists
-                if get_diagram_path(rp.url):
-                    log.debug("Diagram already exists: %s", rp.title[:60])
-                    diagrams_created += 1
-                    continue
-
-                summary = get_post_summary(rp.url)
-                if not summary or summary == SUMMARY_FAILED_MARKER:
-                    continue
-
-                # Step 1: Plan the diagram
-                plan = create_diagram_plan(summary)
-                if not plan:
-                    log.warning("Diagram plan failed for: %s", rp.title[:60])
-                    diagrams_failed += 1
-                    continue
-
-                # Step 2: Build the prompt
-                prompt = build_diagram_prompt(plan, title=rp.title)
-
-                # Step 3: Generate the image
-                image_bytes = generate_diagram(prompt)
-                if not image_bytes:
-                    log.warning("Image generation failed for: %s", rp.title[:60])
-                    diagrams_failed += 1
-                    continue
-
-                # Step 4: Save to disk
-                path = save_diagram(rp.url, image_bytes)
-                if path:
-                    diagrams_created += 1
-                    log.info("Diagram created: %s", rp.title[:60])
-                else:
-                    diagrams_failed += 1
-
-            diagram_lines = [
-                f"Diagrams created: {diagrams_created}",
-                f"Diagrams failed: {diagrams_failed}",
-            ]
-            for line in diagram_lines:
-                print(line)
-                log.info(line)
-
-    elif selected and has_summaries and not Config.IMAGE_API_KEY:
-        print("[INFO] IMAGE_API_KEY not set -- skipping diagram generation.")
-        log.info("IMAGE_API_KEY not set -- skipping diagram generation.")
 
     # == Phase 5/8: Digest generation & subscriber email ===============
     if selected and has_summaries:
-        html, diagram_attachments = build_digest(selected)
+        html = build_digest(selected)
 
         if html:
             item_count = html.count("Read more")
-            diagram_count = len(diagram_attachments)
-            print(f"\nDigest created with {item_count} items, {diagram_count} diagrams")
-            log.info("Digest created with %d items, %d diagrams",
-                     item_count, diagram_count)
+            print(f"\nDigest created with {item_count} items")
+            log.info("Digest created with %d items", item_count)
 
             # Send email to subscribers
             if Config.EMAIL_APP_PASSWORD:
@@ -303,7 +235,6 @@ def main() -> None:
                     sent, failed = send_digest_to_subscribers(
                         html,
                         subscriber_list,
-                        diagram_attachments=diagram_attachments,
                     )
 
                     print(f"Emails sent: {sent}, failed: {failed}")

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import time
 
 from llm_client import generate_completion
 from prompt_builder import build_summary_prompt, SYSTEM_PROMPT
@@ -54,7 +55,7 @@ def _has_copied_text(summary: str, original: str) -> bool:
     original_lower = original.lower()
 
     # Slide a 30-char window over the summary
-    window = 31
+    window = 50
     for i in range(len(summary_lower) - window + 1):
         chunk = summary_lower[i : i + window]
         if chunk in original_lower:
@@ -89,11 +90,13 @@ def summarize_post(title: str, content: str) -> str | None:
     """
     prompt = build_summary_prompt(title, content)
 
-    for attempt in range(2):
+    for attempt in range(3):
         summary = generate_completion(prompt, system_prompt=SYSTEM_PROMPT)
 
         if summary is None:
             log.warning("LLM returned no output (attempt %d)", attempt + 1)
+            if attempt < 2:
+                time.sleep(5)
             continue
 
         if _validate_summary(summary, content):
@@ -104,5 +107,8 @@ def summarize_post(title: str, content: str) -> str | None:
             attempt + 1,
             title[:80],
         )
+
+        if attempt < 2:
+            time.sleep(3)  # brief cooldown before retry
 
     return None

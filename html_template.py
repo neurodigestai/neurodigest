@@ -79,8 +79,7 @@ _FOOTER_STYLE = (
 # Template builder
 # ------------------------------------------------------------------ #
 
-def _render_item(title: str, source: str, summary: str, url: str,
-                  diagram_cid: str | None = None) -> str:
+def _render_item(title: str, source: str, summary: str, url: str) -> str:
     """Render a single digest item as an HTML block."""
     # Split summary into lines and format as bullet list
     lines = [l.strip() for l in summary.strip().splitlines() if l.strip()]
@@ -91,20 +90,6 @@ def _render_item(title: str, source: str, summary: str, url: str,
         if clean:
             bullets_html += f'<li style="margin-bottom: 4px;">{clean}</li>\n'
 
-    # Optional diagram image (only for Major Research items)
-    diagram_html = ""
-    if diagram_cid:
-        diagram_html = f'''
-      <div style="margin: 12px 0; text-align: center;">
-        <img src="cid:{diagram_cid}" width="500"
-             style="max-width: 100%; height: auto; border: 1px solid #ecf0f1; border-radius: 4px;"
-             alt="Concept diagram for: {title[:60]}">
-        <p style="font-size: 11px; color: #95a5a6; margin: 4px 0 0 0; font-style: italic;">
-          Auto-generated concept diagram
-        </p>
-      </div>
-        '''
-
     return f"""
     <div style="{_ITEM_STYLE}">
       <a href="{url}" style="{_ITEM_TITLE_STYLE}" target="_blank">{title}</a>
@@ -112,7 +97,6 @@ def _render_item(title: str, source: str, summary: str, url: str,
       <ul style="{_SUMMARY_STYLE}">
         {bullets_html}
       </ul>
-      {diagram_html}
       <a href="{url}" style="{_LINK_STYLE}" target="_blank">Read more &rarr;</a>
     </div>
     """
@@ -160,7 +144,6 @@ def render_digest(
                 source=item["source"],
                 summary=item.get("summary", ""),
                 url=item["url"],
-                diagram_cid=item.get("diagram_cid"),
             )
         if items_html:
             sections_html += _render_section(section_name, items_html)

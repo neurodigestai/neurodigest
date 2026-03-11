@@ -35,8 +35,7 @@ class Config:
     SMTP_SERVER: str = os.getenv("SMTP_SERVER", "smtp.gmail.com")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
     DIGEST_TITLE: str = os.getenv("DIGEST_TITLE", "Neuro-AI Research Digest")
-    IMAGE_MODEL_PROVIDER: str = os.getenv("IMAGE_MODEL_PROVIDER", "")
-    IMAGE_API_KEY: str = os.getenv("IMAGE_API_KEY", "")
+
     SUBSCRIBERS_SHEET_CSV: str = os.getenv("SUBSCRIBERS_SHEET_CSV", "")
     UNSUBSCRIBE_SHEET_CSV: str = os.getenv("UNSUBSCRIBE_SHEET_CSV", "")
     UNSUBSCRIBE_FORM_URL: str = os.getenv("UNSUBSCRIBE_FORM_URL", "")

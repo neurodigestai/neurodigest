@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import os
 import smtplib
 import time
 from datetime import datetime, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
 
 from config_loader import Config
 from logger import setup_logger
@@ -29,7 +27,6 @@ def _build_message(
     html_body: str,
     sender: str,
     recipient: str,
-    diagram_attachments: list[dict] | None = None,
 ) -> MIMEMultipart:
     """Construct the MIME message for a single recipient.
 
@@ -41,51 +38,19 @@ def _build_message(
         From address.
     recipient : str
         To address.
-    diagram_attachments : list[dict] | None
-        Inline image attachments with ``path`` and ``cid`` keys.
 
     Returns
     -------
     MIMEMultipart
         Ready-to-send MIME message.
     """
-    has_images = bool(diagram_attachments)
-
-    if has_images:
-        msg = MIMEMultipart("related")
-        msg_alt = MIMEMultipart("alternative")
-        msg.attach(msg_alt)
-    else:
-        msg = MIMEMultipart("alternative")
-        msg_alt = msg
-
+    msg = MIMEMultipart("alternative")
     msg["From"] = sender
     msg["To"] = recipient
     msg["Subject"] = _build_subject()
 
     # Attach HTML body
-    msg_alt.attach(MIMEText(html_body, "html", "utf-8"))
-
-    # Attach inline diagram images
-    if has_images:
-        for att in diagram_attachments:
-            path = att.get("path", "")
-            cid = att.get("cid", "")
-            if not path or not cid or not os.path.isfile(path):
-                log.warning("Skipping invalid diagram attachment: %s", path)
-                continue
-            try:
-                with open(path, "rb") as img_file:
-                    img_data = img_file.read()
-                mime_img = MIMEImage(img_data, _subtype="png")
-                mime_img.add_header("Content-ID", f"<{cid}>")
-                mime_img.add_header(
-                    "Content-Disposition", "inline",
-                    filename=os.path.basename(path),
-                )
-                msg.attach(mime_img)
-            except Exception as exc:
-                log.warning("Failed to attach diagram %s: %s", path, exc)
+    msg.attach(MIMEText(html_body, "html", "utf-8"))
 
     return msg
 
@@ -109,7 +74,6 @@ def _send_single(
 def send_digest_email(
     html_body: str,
     recipient: str | None = None,
-    diagram_attachments: list[dict] | None = None,
 ) -> bool:
     """Send the digest HTML email to a single recipient via Gmail SMTP.
 
@@ -119,8 +83,6 @@ def send_digest_email(
         Complete HTML content of the digest.
     recipient : str | None
         Recipient address (defaults to ``Config.EMAIL_ADDRESS``).
-    diagram_attachments : list[dict] | None
-        Optional inline image attachments.
 
     Returns
     -------
@@ -137,7 +99,7 @@ def send_digest_email(
         log.error("EMAIL_ADDRESS or EMAIL_APP_PASSWORD not configured")
         return False
 
-    msg = _build_message(html_body, sender, to_addr, diagram_attachments)
+    msg = _build_message(html_body, sender, to_addr)
 
     for attempt in range(2):
         try:
@@ -170,7 +132,6 @@ def send_digest_email(
 def send_digest_to_subscribers(
     html_body: str,
     subscribers: list[str],
-    diagram_attachments: list[dict] | None = None,
 ) -> tuple[int, int]:
     """Send the digest to a list of subscribers individually.
 
@@ -183,8 +144,6 @@ def send_digest_to_subscribers(
         Complete HTML content of the digest.
     subscribers : list[str]
         List of email addresses to send to.
-    diagram_attachments : list[dict] | None
-        Optional inline image attachments.
 
     Returns
     -------
@@ -223,9 +182,7 @@ def send_digest_to_subscribers(
                 if not subscriber:
                     continue
 
-                msg = _build_message(
-                    html_body, sender, subscriber, diagram_attachments
-                )
+                msg = _build_message(html_body, sender, subscriber)
 
                 success = _send_single(server, sender, subscriber, msg)
                 if success:

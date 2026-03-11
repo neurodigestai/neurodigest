@@ -6,7 +6,7 @@ from typing import List
 
 from html_template import render_digest
 from categories import MAJOR_RESEARCH, UNDERSTANDING, COMMUNITY, TOOLS
-from image_store import get_diagram_path, get_diagram_cid
+
 from config_loader import Config
 from logger import setup_logger
 
@@ -23,7 +23,7 @@ _SECTION_ORDER = [
 MAX_DIGEST_ITEMS = 20
 
 
-def build_digest(selected_posts: list) -> tuple[str | None, list[dict]]:
+def build_digest(selected_posts: list) -> str | None:
     """Build an HTML digest from ranked posts that have summaries.
 
     Parameters
@@ -35,17 +35,13 @@ def build_digest(selected_posts: list) -> tuple[str | None, list[dict]]:
 
     Returns
     -------
-    tuple[str | None, list[dict]]
-        ``(html_string, diagram_attachments)``
-        - ``html_string``: Complete HTML, or ``None`` if no summarized posts.
-        - ``diagram_attachments``: List of dicts with ``path`` and ``cid``
-          keys for inline image attachment in the email.
+    str | None
+        Complete HTML, or ``None`` if no summarized posts.
     """
     from database import get_post_summary  # avoid circular import
 
     # Collect posts that have valid summaries
     items_by_category: dict[str, list[dict]] = {}
-    diagram_attachments: list[dict] = []
     total_items = 0
 
     for rp in selected_posts:
@@ -61,20 +57,7 @@ def build_digest(selected_posts: list) -> tuple[str | None, list[dict]]:
             "url": rp.url,
             "source": rp.source,
             "summary": summary,
-            "diagram_cid": None,
         }
-
-        # Check for diagram (Major Research items only)
-        if rp.category == MAJOR_RESEARCH:
-            diagram_path = get_diagram_path(rp.url)
-            if diagram_path:
-                cid = get_diagram_cid(rp.url)
-                item["diagram_cid"] = cid
-                diagram_attachments.append({
-                    "path": diagram_path,
-                    "cid": cid,
-                })
-                log.debug("Diagram attached for: %s", rp.title[:60])
 
         category = rp.category
         items_by_category.setdefault(category, []).append(item)
@@ -82,7 +65,7 @@ def build_digest(selected_posts: list) -> tuple[str | None, list[dict]]:
 
     if total_items == 0:
         log.warning("No summarized posts available for digest")
-        return None, []
+        return None
 
     # Build ordered sections (only include non-empty categories)
     ordered_sections: dict[str, list[dict]] = {}
@@ -101,4 +84,4 @@ def build_digest(selected_posts: list) -> tuple[str | None, list[dict]]:
     log.info("Digest created with %d items across %d sections",
              total_items, len(ordered_sections))
 
-    return html, diagram_attachments
+    return html

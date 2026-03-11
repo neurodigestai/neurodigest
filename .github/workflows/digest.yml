@@ -15,7 +15,8 @@ name: Neuro-AI Digest
 on:
   schedule:
     # Run every 3 days at 06:00 UTC
-    - cron: "0 6 */3 * *"
+    # Days: 2,5,8,11,14,17,20,23,26,29 gives a consistent ~3-day cadence
+    - cron: "0 6 2,5,8,11,14,17,20,23,26,29 * *"
 
   # Allow manual runs from the Actions tab
   workflow_dispatch:
@@ -32,8 +33,6 @@ jobs:
       DEEPSEEK_API_KEY:     ${{ secrets.DEEPSEEK_API_KEY }}
       EMAIL_ADDRESS:        ${{ secrets.EMAIL_ADDRESS }}
       EMAIL_APP_PASSWORD:   ${{ secrets.EMAIL_APP_PASSWORD }}
-      IMAGE_MODEL_PROVIDER: ${{ secrets.IMAGE_MODEL_PROVIDER }}
-      IMAGE_API_KEY:        ${{ secrets.IMAGE_API_KEY }}
       SUBSCRIBERS_SHEET_CSV: ${{ secrets.SUBSCRIBERS_SHEET_CSV }}
       UNSUBSCRIBE_SHEET_CSV: ${{ secrets.UNSUBSCRIBE_SHEET_CSV }}
       UNSUBSCRIBE_FORM_URL: ${{ secrets.UNSUBSCRIBE_FORM_URL }}
