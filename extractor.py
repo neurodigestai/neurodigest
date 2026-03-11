@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from cleaner import clean_text
 from text_utils import validate_content
@@ -28,12 +27,6 @@ _LAST_REQUEST_TIME = 0.0
 _MIN_REQUEST_INTERVAL = 1.5  # seconds between requests (rate-limiting)
 
 
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10),
-    retry=retry_if_exception_type((requests.ConnectionError, requests.Timeout)),
-    reraise=True,
-)
 def _fetch_page(url: str) -> str:
     """Download a URL and return the response text.
 
@@ -42,14 +35,25 @@ def _fetch_page(url: str) -> str:
     to avoid hammering servers.
     """
     global _LAST_REQUEST_TIME
-    elapsed = time.time() - _LAST_REQUEST_TIME
-    if elapsed < _MIN_REQUEST_INTERVAL:
-        time.sleep(_MIN_REQUEST_INTERVAL - elapsed)
 
-    resp = _SESSION.get(url, timeout=REQUEST_TIMEOUT)
-    _LAST_REQUEST_TIME = time.time()
-    resp.raise_for_status()
-    return resp.text
+    for attempt in range(1, 4):
+        elapsed = time.time() - _LAST_REQUEST_TIME
+        if elapsed < _MIN_REQUEST_INTERVAL:
+            time.sleep(_MIN_REQUEST_INTERVAL - elapsed)
+
+        try:
+            resp = _SESSION.get(url, timeout=REQUEST_TIMEOUT)
+            _LAST_REQUEST_TIME = time.time()
+            resp.raise_for_status()
+            return resp.text
+        except (requests.ConnectionError, requests.Timeout) as exc:
+            if attempt < 3:
+                wait = min(2 ** attempt, 10)
+                log.debug("Fetch retry %d for %s (waiting %ds): %s",
+                          attempt, url, wait, exc)
+                time.sleep(wait)
+            else:
+                raise
 
 
 # ------------------------------------------------------------------ #
